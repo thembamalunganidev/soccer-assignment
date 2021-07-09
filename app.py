@@ -1,8 +1,10 @@
 import click
 
-from formatters import ComplexLogFormatter, SimpleLogFormatter
+from formatters import SimpleLogFormatter
+from helpers import SimplePointsCalculator
 from models import LogTable
 from readers import InputReader, SimpleInputReader
+from sorters import SimpleLogSorter
 
 
 @click.command()
@@ -15,7 +17,8 @@ def run_app(
     if input_:
         LogTable \
             .from_(input_) \
-            .sorted() \
+            .calculate_points(calculator=SimplePointsCalculator()) \
+            .sorted(sorter=SimpleLogSorter()) \
             .format(formatter=SimpleLogFormatter(), print_=True)
 
 

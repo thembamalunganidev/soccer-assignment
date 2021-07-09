@@ -1,6 +1,8 @@
 from typing import List
 
+from config import Config
 from formatters import LogFormatter, SimpleLogFormatter
+from helpers import PointsCalculator, SimplePointsCalculator
 from sorters import SimpleLogSorter, LogSorter
 
 
@@ -32,16 +34,13 @@ class Team:
     wins: int = 0
     losses: int = 0
     draws: int = 0
+    points: int = 0
 
     def __init__(self, name: str):
         self.name = name
 
     def __repr__(self):
         return f'{self.name} {self.points}'
-
-    @property
-    def points(self):
-        return (self.wins * 3) + self.draws
 
     def update(self, result: Result) -> 'Team':
         self.played += 1
@@ -85,6 +84,14 @@ class LogTable:
         for result in results:
             log._process(result)
         return log
+
+    def calculate_points(self, calculator: PointsCalculator = SimplePointsCalculator()):
+        to_update = []
+        for team in self.teams:
+            team.points = calculator.calculate(team)
+            to_update.append(team)
+        self.update(to_update)
+        return self
 
     def _process(self, result):
         team_a: Team = self.get_team(result.team_a['name'])
