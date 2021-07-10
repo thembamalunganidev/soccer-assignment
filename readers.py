@@ -49,6 +49,8 @@ class SimpleInputReader(InputReader):
             if not line:
                 if click.confirm('Done entering results?'):
                     break
+                else:
+                    continue
             elif line.lower() == "done" or line.lower() == "d":
                 break
             else:
