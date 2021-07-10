@@ -14,14 +14,16 @@ def run_app(
         reader: InputReader = SimpleInputReader()
 ):
     input_ = reader.file(filename) if filename else reader.std()
-    if input_:
-        LogTable \
-            .from_(input_) \
-            .calculate_points(calculator=SimplePointsCalculator()) \
-            .sorted(sorter=SimpleLogSorter()) \
-            .format(formatter=SimpleLogFormatter(), print_=True)
-    else:
+
+    if not input_:
         click.echo('No input entered. Aborting!')
+        return
+
+    LogTable \
+        .from_(input_) \
+        .calculate_points(calculator=SimplePointsCalculator()) \
+        .sorted(sorter=SimpleLogSorter()) \
+        .format(formatter=SimpleLogFormatter(), print_=True)
 
 
 if __name__ == '__main__':
