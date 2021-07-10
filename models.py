@@ -54,8 +54,17 @@ class Team:
 
 
 class LogTable:
+    teams: List[Team] = []
+
     def __init__(self):
         self.teams: List[Team] = []
+
+    @classmethod
+    def from_(cls, results: List[Result]) -> 'LogTable':
+        log = LogTable()
+        for result in results:
+            log._process(result)
+        return log
 
     def get_team(self, name: str) -> Team:
         for team_ in self.teams:
@@ -77,13 +86,6 @@ class LogTable:
                     self.teams.append(team_)
             else:
                 self.teams.insert(0, team_)
-
-    @classmethod
-    def from_(cls, results: List[Result]) -> 'LogTable':
-        log = LogTable()
-        for result in results:
-            log._process(result)
-        return log
 
     def calculate_points(self, calculator: PointsCalculator = SimplePointsCalculator()):
         to_update = []
