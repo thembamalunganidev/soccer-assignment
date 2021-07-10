@@ -20,6 +20,8 @@ def run_app(
             .calculate_points(calculator=SimplePointsCalculator()) \
             .sorted(sorter=SimpleLogSorter()) \
             .format(formatter=SimpleLogFormatter(), print_=True)
+    else:
+        click.echo('No input entered. Aborting!')
 
 
 if __name__ == '__main__':
