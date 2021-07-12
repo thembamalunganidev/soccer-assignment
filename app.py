@@ -3,7 +3,7 @@ import click
 from formatters import SimpleLogFormatter
 from helpers import SimplePointsCalculator
 from models import LogTable
-from readers import InputReader, StandardInputReader, FileInputReader
+from readers import InputReader, StandardInputReader, FileInputReader, InputErrorHandler
 from sorters import SimpleLogSorter
 
 
@@ -13,8 +13,7 @@ def app(
         filename: str
 ):
     try:
-        reader: InputReader = FileInputReader(filename=filename, report_errors=True, ignore_errors=True) \
-            if filename else StandardInputReader()
+        reader: InputReader = FileInputReader(filename=filename) if filename else StandardInputReader()
 
         LogTable \
             .from_(reader.read()) \
