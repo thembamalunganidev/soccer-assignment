@@ -3,20 +3,21 @@ import click
 from formatters import SimpleLogFormatter
 from helpers import SimplePointsCalculator
 from models import LogTable
-from readers import InputReader, SimpleInputReader
+from readers import InputReader, StandardInputReader, FileInputReader
 from sorters import SimpleLogSorter
 
 
 @click.command()
 @click.option('-f', '--filename', help='Specify the file containing match results')
-def run_app(
-        filename: str,
-        reader: InputReader = SimpleInputReader(report_errors=True, ignore_errors=False)
+def app(
+        filename: str
 ):
     try:
-        input_ = reader.file(filename) if filename else reader.std()
+        reader: InputReader = FileInputReader(filename=filename, report_errors=True, ignore_errors=True) \
+            if filename else StandardInputReader()
+
         LogTable \
-            .from_(input_) \
+            .from_(reader.read()) \
             .calculate_points(calculator=SimplePointsCalculator()) \
             .sorted(sorter=SimpleLogSorter()) \
             .format(formatter=SimpleLogFormatter(), print_=True)
@@ -26,4 +27,4 @@ def run_app(
 
 
 if __name__ == '__main__':
-    run_app()
+    app()

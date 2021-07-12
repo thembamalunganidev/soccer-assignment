@@ -8,14 +8,6 @@ from parsers import InputParser, SimpleInputParser
 
 
 class InputReader:
-    def file(self, filename: str) -> List[Result]:
-        raise NotImplementedError
-
-    def std(self) -> List[Result]:
-        raise NotImplementedError
-
-
-class SimpleInputReader(InputReader):
     def __init__(self,
                  parser: InputParser = SimpleInputParser(),
                  ignore_errors: bool = True,
@@ -25,9 +17,29 @@ class SimpleInputReader(InputReader):
         self.report_errors = report_errors
         self.ignore_errors = ignore_errors
 
-    def file(self, filename) -> List[Result]:
-        if os.path.isfile(filename):
-            with open(filename, 'r') as file:
+    def read(self) -> List[Result]:
+        raise NotImplementedError
+
+    def _handle_error(self, error):
+        if self.report_errors:
+            click.echo(click.style(error, fg='red'))
+        if not self.ignore_errors:
+            raise ValueError(error)
+
+
+class FileInputReader(InputReader):
+    def __init__(self,
+                 filename: str,
+                 parser: InputParser = SimpleInputParser(),
+                 ignore_errors: bool = True,
+                 report_errors: bool = True
+                 ):
+        self.filename = filename
+        super(FileInputReader, self).__init__(parser=parser, ignore_errors=ignore_errors, report_errors=report_errors)
+
+    def read(self) -> List[Result]:
+        if os.path.isfile(self.filename):
+            with open(self.filename, 'r') as file:
                 results: List[Result] = []
                 for index, line in enumerate(file.readlines()):
                     try:
@@ -39,10 +51,19 @@ class SimpleInputReader(InputReader):
                         self._handle_error(error)
                 return results
 
-        error = f'File does not exist: {filename}'
+        error = f'File does not exist: {self.filename}'
         self._handle_error(error=error)
 
-    def std(self) -> List[Result]:
+
+class StandardInputReader(InputReader):
+    def __init__(self,
+                 parser: InputParser = SimpleInputParser(),
+                 ignore_errors: bool = True,
+                 report_errors: bool = True
+                 ):
+        super(StandardInputReader, self).__init__(parser=parser, ignore_errors=ignore_errors, report_errors=report_errors)
+
+    def read(self) -> List[Result]:
         prompt = 'Reading from standard input. Please enter input and press enter\n' \
                  'Example: Lions 3, Snakes 2\n' \
                  'Enter "done" or "d" to finish input\n'
@@ -67,9 +88,3 @@ class SimpleInputReader(InputReader):
                     error = "Invalid input. Please enter input in format: Lions 3, Snakes 2"
                     self._handle_error(error=error)
         return results
-
-    def _handle_error(self, error):
-        if self.report_errors:
-            click.echo(click.style(error, fg='red'))
-        if not self.ignore_errors:
-            raise ValueError(error)
