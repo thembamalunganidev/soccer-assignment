@@ -20,6 +20,6 @@ class SimpleInputParser(InputParser):
     def _extract(team_data):
         team_data = team_data.strip(' ').strip('\n').split(' ')
         return {
-            'name': " ".join(team_data[:-1]) if len(team_data) > 2 else team_data[0],
+            'name': " ".join(team_data[:-1]),
             'score': int(team_data[-1])
         }
