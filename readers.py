@@ -32,7 +32,7 @@ class SimpleInputReader(InputReader):
                     results.append(result)
                 except ValueError:
                     line = line.strip('\n')
-                    click.echo(click.style(f'Invalid input a line {index + 1}: [{line}]', fg='red'))
+                    click.echo(click.style(f'Invalid input at line {index + 1}: [{line}]', fg='red'))
                     continue
             return results
 
