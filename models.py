@@ -63,7 +63,8 @@ class LogTable:
     def from_(cls, results: List[Result]) -> 'LogTable':
         log = LogTable()
         for result in results:
-            log._process(result)
+            if isinstance(result, Result):
+                log._process(result)
         return log
 
     def get_team(self, name: str) -> Team:
